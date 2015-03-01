@@ -2,8 +2,6 @@
 
 namespace Bing;
 
-use Bing\BingImagesServiceProvider;
-
 
 class BingImagesService {
 
