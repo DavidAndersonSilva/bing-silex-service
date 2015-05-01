@@ -12,6 +12,19 @@ class BingImagesService {
 		$this->setKey($appId);
 	}
 
+	/**
+	 * Resposta do Serviço
+	 * @param $query string Parâmetro de busca
+	 * @return mixed Resposta do serviço
+	 */
+	public function getResponse ($query) {
+		$query = urlencode("'{$query}'");
+		$context = $this->getContext();
+		$requestUrl = "{$this->api}?\$format=json&Query={$query}";
+		$response = file_get_contents($requestUrl, 0, $context);
+		return $response;
+	}
+
 	private function setKey ($key) {
 		$this->appId = $key;
 	}
@@ -46,19 +59,6 @@ class BingImagesService {
 		$data = $this->getAuth($key);
 		$context = stream_context_create($data);
 		return $context;
-	}
-
-	/**
-	 * Resposta do Serviço
-	 * @param $query string Parâmetro de busca
-	 * @return mixed Resposta do serviço
-	 */
-	public function getResponse ($query) {
-		$query = urlencode("'{$query}'");
-		$context = $this->getContext();
-		$requestUrl = "{$this->api}?\$format=json&Query={$query}";
-		$response = file_get_contents($requestUrl, 0, $context);
-		return $response;
 	}
 
 }
