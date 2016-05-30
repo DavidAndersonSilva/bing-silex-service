@@ -1,5 +1,7 @@
 /vendor
 /composer.lock
 
-phpunit.xml
 *.phar
+
+bing_config.ini
+phpunit.xml
