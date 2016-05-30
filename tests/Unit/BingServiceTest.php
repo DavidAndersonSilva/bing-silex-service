@@ -1,31 +1,25 @@
 <?php
 
-namespace Tests\Unit;
+namespace Bing\Tests\Unit;
 
 use Bing\Services\BingImageService;
 use Bing\Services\BingImageServiceInterface;
-use Bing\Auth\BingAuth;
-use Bing\Proxy\BingProxy;
+use Psr\Http\Message\ResponseInterface;
+use Bing\Tests\Unit\Mocks\Http\MockHttpClient;
+use Bing\Tests\Unit\Mocks\Http\MockHttpResponse;
 
 
 class BingServiceTest extends \PHPUnit_Framework_TestCase
 {
 
-    private $appID;
-
-    protected function setUp()
-    {
-        $this->appID = "";
-    }
-
     public function testCreateBingService()
     {
-        $auth = new BingAuth($this->appID);
-        $proxy = BingProxy::create($auth);
+        $responses = [MockHttpResponse::getMockHttpSuccess()];
+        $httpClient = MockHttpClient::getMock($responses);
 
-        $service = new BingImageService($proxy);
+        $service = new BingImageService($httpClient);
 
-        $this->assertInstanceOf(BingImageService::class, $service);
+        $this->assertInstanceOf(BingImageServiceInterface::class, $service);
 
         return $service;
     }
@@ -39,7 +33,11 @@ class BingServiceTest extends \PHPUnit_Framework_TestCase
         $query = "Symfony";
         $response = $service->getResponse($query);
 
-        $this->assertNotEmpty($response);
+        $body = $response->getBody() . '';
+
+        $this->assertInstanceOf(ResponseInterface::class, $response);
+        $this->assertNotEmpty($body);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
 }

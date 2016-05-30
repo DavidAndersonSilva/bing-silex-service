@@ -3,43 +3,44 @@
 namespace Bing\Services;
 
 use Bing\Proxy\ProxyInterface;
+use GuzzleHttp\Client as HttpClient;
 
 
 class BingImageService implements BingImageServiceInterface
 {
 
-    private $api = "https://api.datamarket.azure.com/Bing/Search/v1/Image";
-
     /**
      *
      * @var ProxyInterface
      */
-    private $proxy;
+    private $httpClient;
 
-    public function __construct(ProxyInterface $proxy)
+    public function __construct(HttpClient $httpClient)
     {
-        $this->setProxy($proxy);
+        $this->setHttpClient($httpClient);
     }
 
     public function getResponse($query)
     {
-        $context = $this->getProxy()->connect();
-
         $query = urlencode("'{$query}'");
-        $requestUrl = "{$this->api}?\$format=json&Query={$query}";
-        $response = file_get_contents($requestUrl, 0, $context);
+        $requestUrl = "?\$format=json&Query={$query}";
 
+        $response = $this->getHttpClient()->get($requestUrl);
         return $response;
     }
 
-    private function getProxy()
+    /**
+     * 
+     * @return HttpClient
+     */
+    private function getHttpClient()
     {
-        return $this->proxy;
+        return $this->httpClient;
     }
 
-    private function setProxy(ProxyInterface $proxy)
+    private function setHttpClient(HttpClient $httpClient)
     {
-        $this->proxy = $proxy;
+        $this->httpClient = $httpClient;
     }
 
 }
